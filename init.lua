@@ -247,8 +247,24 @@ rtp:prepend(lazypath)
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
-  'NMAC427/guess-indent.nvim', -- Detect tabstop and shiftwidth automatically
+  {
+    'NMAC427/guess-indent.nvim',
+    config = function()
+      require('guess-indent').setup {}
 
+      -- C++-specific indentation override
+      vim.api.nvim_create_autocmd('FileType', {
+        pattern = { 'cpp', 'c', 'h', 'hpp' },
+        callback = function()
+          vim.b.guess_indent_enabled = false
+          vim.bo.shiftwidth = 4
+          vim.bo.tabstop = 8
+          vim.bo.softtabstop = 4
+          vim.bo.expandtab = true
+        end,
+      })
+    end,
+  },
   -- NOTE: Plugins can also be added by using a table,
   -- with the first argument being the link and the following
   -- keys can be used to configure plugin behavior/loading/etc.
@@ -895,7 +911,7 @@ require('lazy').setup({
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'cyberdream'
+      vim.cmd.colorscheme 'cyberdream-light'
     end,
   },
 
